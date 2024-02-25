@@ -113,7 +113,7 @@ struct CommonArgs {
     #[clap(
         long = "relay-server",
         visible_alias = "relay",
-        multiple_occurrences = true,
+        action = clap::ArgAction::Append,
         value_name = "tcp://HOSTNAME:PORT",
         value_hint = clap::ValueHint::Url
     )]
@@ -140,7 +140,7 @@ enum ForwardCommand {
     )]
     Serve {
         /// List of ports to open up. You can optionally specify a domain/address to forward remote ports
-        #[clap(value_name = "[DOMAIN:]PORT", multiple_occurrences = true, value_hint = clap::ValueHint::Hostname)]
+        #[clap(value_name = "[DOMAIN:]PORT", action = clap::ArgAction::Append, value_hint = clap::ValueHint::Hostname)]
         targets: Vec<String>,
         #[clap(flatten)]
         common: CommonArgs,
@@ -156,7 +156,7 @@ enum ForwardCommand {
         #[clap(
             short = 'p',
             long = "port",
-            multiple_occurrences = true,
+            action = clap::ArgAction::Append,
             value_name = "PORT"
         )]
         ports: Vec<u16>,
@@ -1187,5 +1187,10 @@ mod test {
             clap_complete::generate(*shell, &mut cmd, &binary_name, &mut out);
             String::from_utf8(out).unwrap();
         }
+    }
+
+    #[test]
+    fn verify_cli() {
+        WormholeCli::command().debug_assert();
     }
 }
